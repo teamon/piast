@@ -52,11 +52,11 @@ int main() {
 
 	for(;;){
 		while(!buf0.empty()){
-			send_byte0(buf0.read());
+			send_byte1(buf0.read());
 		}
 		
 		while(!buf1.empty()){
-			send_byte1(buf1.read());
+			send_byte0(buf1.read());
 		}
 	}
 }
