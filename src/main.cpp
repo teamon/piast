@@ -1,7 +1,10 @@
 #include "piast.h"
 #include "buffer.h"
 
+
 Buffer buf0, buf1;
+
+
 
 ISR(USART0_RX_vect){
 	char in;
@@ -45,10 +48,16 @@ void init(){
 }
 
 
+
+
 int main() {
 	init();
 	
 	sei();
+	LCDinit();
+	LCDcursorOFF();
+	LCDGotoXY(0,1);
+
 
 	for(;;){
 		while(!buf0.empty()){
