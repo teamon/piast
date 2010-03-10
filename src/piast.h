@@ -5,6 +5,7 @@
 // #include <avr/iom32.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
+#include <avr/pgmspace.h>
 #include <stdlib.h>
 
 #endif
