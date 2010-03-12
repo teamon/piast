@@ -128,24 +128,53 @@ void Usart::sendNumber(long number){
 	}
 }
 
-Usart & Usart::operator<<(unsigned char byte){
+Usart & Usart::operator<<(const unsigned char byte){
 	sendByte(byte);
 	return *this;
 }
 
+Usart & Usart::operator<<(const char byte){
+	sendByte(byte);
+	return *this;
+}
 
 Usart & Usart::operator<<(char* string){
 	while (*string != '\0') sendByte(*(string++));
 	return *this;
 }
 
-Usart & Usart::operator<<(long number){
+Usart & Usart::operator<<(const long number){
 	sendNumber(number);
 	return *this;
 }
 
-Usart & Usart::operator<<(int number){
+Usart & Usart::operator<<(const int number){
 	sendNumber(number);
+	return *this;
+}
+
+Usart & Usart::operator>>(unsigned char &c){
+	c = get();
+	return *this;
+}
+
+Usart & Usart::operator>>(int &c){
+	unsigned char first = get();
+	int n = 0;
+	int sign = 1;
+
+	if(first == '-') sign = -1;
+	else if(first >= '0' && first <= '9') n = __usart__char2int(first);
+
+	for(;;){
+		while(buf.empty());
+		unsigned char c = buf.read();
+		if(c == '\n') break;
+		n *= 10;
+		n += __usart__char2int(c);
+	}
+
+	c = n*sign;
 	return *this;
 }
 

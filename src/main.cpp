@@ -4,13 +4,14 @@
 USART0(usb);
 USART1(zigbit);
 
-
 int main() {
 	sei();
 
 	for(;;){
-		while(!usb.empty()){
-			usb << usb.get();
+		if(!usb.empty()){
+			unsigned char c;
+			usb >> c;
+			usb << c;
 		}
 	}
 }

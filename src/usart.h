@@ -6,12 +6,11 @@
 #define __usart__char2int(c) (c - 48)
 #define __usart__int2char(c) (c + 48)
 
-
 #if defined (__AVR_ATmega32__)
 #	define USART(u) Usart u; ISR(USART_RXC_vect){ u.read(UDR); }
 #elif defined (__AVR_ATmega128__)
-#	define USART0(u) Usart u = Usart(0); ISR(USART0_RX_vect){ u.read(UDR0); }
-#	define USART1(u) Usart u = Usart(1); ISR(USART1_RX_vect){ u.read(UDR1); }
+#	define USART0(u) Usart u = Usart(0); ISR(USART0_RX_vect){ int c; c = UDR0; u.read(c); }
+#	define USART1(u) Usart u = Usart(1); ISR(USART1_RX_vect){ int c; c = UDR1; u.read(c); }
 #else
 #	error "Device not supported"
 #endif
@@ -47,13 +46,18 @@ public:
 	void sendByte(unsigned char byte);	
 	void sendNumber(long number);
 	
-	Usart & operator<<(unsigned char c);
+	Usart & operator<<(const unsigned char c);
+	Usart & operator<<(const char c);
 	Usart & operator<<(char* string);
-	Usart & operator<<(int number);
-	Usart & operator<<(long number);
+	Usart & operator<<(const int number);
+	Usart & operator<<(const long number);
 	
-private:
+	Usart & operator>>(unsigned char &c);
+	Usart & operator>>(int &c);
+	
+// private:
 	UsartBuffer buf;
+	UsartBuffer buf_out;
 	char _n;
 };
 
