@@ -1,4 +1,4 @@
-DEVICE      = atmega128
+DEVICE      = atmega32
 CLOCK       = 8000000
 PROGRAMMER  = -c stk500v2 -P avrdoper
 AVRDUDE     = avrdude $(PROGRAMMER) -p $(DEVICE)
