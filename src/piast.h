@@ -7,5 +7,9 @@
 #include <util/delay.h>
 #include <avr/pgmspace.h>
 #include <stdlib.h>
+#include <avr/pgmspace.h>
+#include "char_code.h"
+#include "LCD_lib.h"
+
 
 #endif

@@ -31,3 +31,4 @@ mkdirs:
 clean:
 	rm -f main main.hex
 	rm -rf out/*
+
