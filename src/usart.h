@@ -189,7 +189,7 @@ public:
 /**
  * @class Usart1
  * 
- * Atmega128 interface
+ * Atmega128 USART1 interface
  * @ingroup usart
 **/
 class Usart1: public Usart {

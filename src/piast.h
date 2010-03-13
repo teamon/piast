@@ -1,13 +1,41 @@
 #ifndef PIAST_H_
 #define PIAST_H_
 
+/**
+ * @file piast.h
+ * @defgroup piast Piast1
+ * 
+ * @brief  Multifuncional wireless device controler
+ * 
+ * @version 0.1
+ * @author Tymon Tobolski http://teamon.eu
+**/
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <avr/pgmspace.h>
 #include <stdlib.h>
 #include <avr/pgmspace.h>
-#include "LCD_lib.h"
+
+/**
+ * @def config_read
+ * Read config from eeprom.
+ * @ingroup piast
+**/
+#define config_read(addr) (int)eeprom_read_word((uint16_t*)addr)
+
+/**
+ * @def config_save
+ * Save config to eeprom.
+ * @ingroup piast
+**/
+#define config_save(addr, value) eeprom_write_word((uint16_t*)addr, (uint16_t)value)
+
+#define BRIGHTNESS 0
+#define CONTRAST 2
+
+
 
 
 #endif

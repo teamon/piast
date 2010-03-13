@@ -1,20 +1,23 @@
 #include "piast.h"
 #include "usart.h"
-#include "LCD_lib.h"
+#include "lcd.h"
+#include <avr/eeprom.h> 
 
-uint8_t  name[] = "PIAST";
-uint8_t  website[] = "yayetee.com";
 
-uint8_t right_arrow[] PROGMEM= 
+char  website[] = "yayetee.com";
+
+LCD lcd; //lcd init
+
+uint8_t heart[] PROGMEM= 
 {
 0b00000000,
-0b00001000,
-0b00001100,
+0b00001010,
+0b00011111,
+0b00011111,
+0b00011111,
 0b00001110,
-0b00001111,
-0b00001110,
-0b00001100,
-0b00001000
+0b00000100,
+0b00000000
 };
 
 
@@ -23,7 +26,8 @@ volatile int axis=0;
 char x[4];
 char y[4];
 char z[4];
-
+unsigned char contrast;
+unsigned char brightness;
 
 SIGNAL (SIG_ADC)
 {	
@@ -44,76 +48,44 @@ void ADCinit(void)
 
 
 int main() {
-	LCDinit();
-	LCDcursorOFF();
+	lcd.cursorOff();
 	ADCinit();
 	sei();
 	
-	LCDdefinechar(right_arrow,0);
-
+	lcd.define(heart,0);
+	
+	
+	config_save(BRIGHTNESS, 15);
+	config_save(CONTRAST, 10);
+	
+	brightness= config_read(BRIGHTNESS);
+	contrast = config_read(CONTRAST);
 
 	
-	LCDGotoXY(0,1);
-	LCDsendChar(0);
-	LCDstring(website,11);
+
+	
+	lcd.gotoxy(1,1);
+	lcd << (char) 0;
+	lcd << (int) contrast;
+	lcd << (char) 0;
+	lcd << (int) brightness;
 	while(1)
 	{
-		int k=0;
 		
+		lcd.gotoxy(0,0);
+		lcd << "     ";
+		lcd.gotoxy(0,0);
+		lcd << (value[0]-50)*2 << '%';
 		
-		value[0]=(value[0]-50)*2;
+		lcd.gotoxy(5,0);
+		lcd << "     ";
+		lcd.gotoxy(5,0);
+		lcd << (value[1]-50)*2 << '%';
 		
-		itoa(value[0], x, 10);
-		LCDGotoXY(0,0);
-		LCDsendChar(128);
-		LCDsendChar(128);
-		LCDsendChar(128);
-		LCDsendChar(128);
-		LCDsendChar(128);
-		LCDGotoXY(0,0);
-		while(x[k]!='\0')
-		{
-			LCDsendChar(x[k]);
-			k++;
-		}
-		LCDsendChar('%');
-		
-		value[1]=(value[1]-50)*2;
-		itoa(value[1], y, 10);
-		LCDGotoXY(5,0);
-		LCDsendChar(128);
-		LCDsendChar(128);
-		LCDsendChar(128);
-		LCDsendChar(128);
-		LCDsendChar(128);
-		LCDGotoXY(5,0);
-		k=0;
-		
-		while(y[k]!='\0')
-		{
-			LCDsendChar(y[k]);
-			k++;
-		}
-		LCDsendChar('%');
-		
-		
-		value[2]=(value[2]-50)*2;
-		itoa(value[2], z, 10);
-		LCDGotoXY(11,0);
-		LCDsendChar(128);
-		LCDsendChar(128);
-		LCDsendChar(128);
-		LCDsendChar(128);
-		LCDsendChar(128);
-		LCDGotoXY(11,0);
-		k=0;
-		\
-		while(z[k]!='\0')
-		{
-			LCDsendChar(z[k]);
-			k++;
-		}
-		LCDsendChar('%');
+		lcd.gotoxy(11,0);
+		lcd << "     ";
+		lcd.gotoxy(11,0);
+		lcd << (value[2]-50)*2 << '%';
 		
 	}
 }

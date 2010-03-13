@@ -23,6 +23,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <util/delay.h>
 #include <avr/pgmspace.h>
+#include <stdlib.h>
 #include "lcd.h"
 
 #ifndef LCD_RS
@@ -187,7 +188,7 @@ void LCD::define(const unsigned char * dfn, unsigned char code){
 	unsigned char a = (code << 3) | 0x40;
 	for(int i=0; i<8; i++){
 		cmd(a++);
-		*this << (unsigned char)pgm_read_byte(dfn+1);
+		*this << (unsigned char)pgm_read_byte(dfn+i);
 	}
 }
 
@@ -242,11 +243,13 @@ LCD & LCD::operator<<(char* string){
 }
 
 LCD & LCD::operator<<(const int number){
-	
+	*this << (long) number;
 	return *this;
 }
 
 LCD & LCD::operator<<(const long number){
-	
+	char str[10];
+	itoa(number, str, 10);
+	*this << str;
 	return *this;
 }
