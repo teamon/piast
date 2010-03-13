@@ -1,67 +1,126 @@
 #include "piast.h"
 #include "usart.h"
 
-#include "lcd.h"
+#include "LCD_lib.h"
 
 
 uint8_t  name[] = "PIAST";
-uint8_t  website[] = "www.yayetee.com";
+uint8_t  website[] = "yayetee.com";
 
-uint8_t backslash[] PROGMEM= 
+uint8_t right_arrow[] PROGMEM= 
 {
 0b00000000,
-0b00010101,
+0b00001000,
+0b00001100,
 0b00001110,
-0b00010101,
+0b00001111,
 0b00001110,
-0b00010101,
-0b00000000,
-0b00000000
+0b00001100,
+0b00001000
 };
 
-void delay_200ms(void)
-{
-	_delay_ms(200);
+
+volatile int value[3];
+volatile int axis=0;
+char x[4];
+char y[4];
+char z[4];
+
+
+SIGNAL (SIG_ADC)
+{	
+	value[axis]=(ADCL|(ADCH<<8))*10 / 102; //read 10-bit value from two 8 bit registers (right adjustment)
+	if (++axis > 2) axis = 0;
+	ADMUX = (0xC0 | axis);
+	ADCSRA|=_BV(ADSC); //Write ADSC to one, in order to start next conversion
 }
 
 
+void ADCinit(void)
+{
+  ADCSRA=_BV(ADEN) | _BV(ADSC) | _BV(ADIE) | _BV(ADPS2) | _BV(ADPS0);; //ADCenable, Interrupt Enable, ADCstarConversion,  
+  ADMUX=0x00; //Vref external, right adjustment, start from adc0
+  DDRF=0x00;
+  //do not forget to enable interrupts using sei()
+}
+  
+  
+
+
 int main() {
-	init();
+
 	
-	uint8_t x;
-	uint8_t y;
-	uint8_t j;
 
 	LCDinit();
 	LCDcursorOFF();
-	LCDdefinechar(backslash,0);
-
-	LCDGotoXY(0,1);
-	// LCDsendChar(0x00);
-	LCDstring(website,15);
-	// LCDsendChar(0x00);
+	ADCinit();
+	sei();
 	
+	LCDdefinechar(right_arrow,0);
+
+
+	
+	LCDGotoXY(0,1);
+	LCDsendChar(0);
+	LCDstring(website,11);
 	while(1)
 	{
-
-		for(x=0;x<11;x++){
-			LCDGotoXY(0,0);
-			for(j=0;j<x;j++){
-				LCDsendChar(space);
-			}
-			LCDGotoXY(x,0);
-			LCDstring(name,5);
-			LCDsendChar(space);
-			delay_200ms();
+		int k=0;
+		
+		
+		value[0]=(value[0]-50)*2;
+		
+		itoa(value[0], x, 10);
+		LCDGotoXY(0,0);
+		LCDsendChar(128);
+		LCDsendChar(128);
+		LCDsendChar(128);
+		LCDsendChar(128);
+		LCDsendChar(128);
+		LCDGotoXY(0,0);
+		while(x[k]!='\0')
+		{
+			LCDsendChar(x[k]);
+			k++;
 		}
-
-		for(y=9;y>0;y--){
-			LCDGotoXY(y,0);
-			LCDstring(name,5);
-			for(j=y+6;j<16;j++){
-				LCDsendChar(space);
-			}
-			delay_200ms();
-		}	
+		LCDsendChar('%');
+		
+		value[1]=(value[1]-50)*2;
+		itoa(value[1], y, 10);
+		LCDGotoXY(5,0);
+		LCDsendChar(128);
+		LCDsendChar(128);
+		LCDsendChar(128);
+		LCDsendChar(128);
+		LCDsendChar(128);
+		LCDGotoXY(5,0);
+		k=0;
+		
+		while(y[k]!='\0')
+		{
+			LCDsendChar(y[k]);
+			k++;
+		}
+		LCDsendChar('%');
+		
+		
+		value[2]=(value[2]-50)*2;
+		itoa(value[2], z, 10);
+		LCDGotoXY(11,0);
+		LCDsendChar(128);
+		LCDsendChar(128);
+		LCDsendChar(128);
+		LCDsendChar(128);
+		LCDsendChar(128);
+		LCDGotoXY(11,0);
+		k=0;
+		\
+		while(z[k]!='\0')
+		{
+			LCDsendChar(z[k]);
+			k++;
+		}
+		LCDsendChar('%');
+		
 	}
 }
