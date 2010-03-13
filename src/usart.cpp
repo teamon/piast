@@ -29,7 +29,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * @def __usart__char2int(c)
  * Converts char into int, e.g. '1' into 1
  * 
- * @param c char
+ * @param c - char
  * @addtogroup usart
 **/
 #define __usart__char2int(c) (c - 48)
@@ -38,7 +38,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * @def __usart__int2char(c)
  * Converts int into char, e.g. 1 into '1'
  * 
- * @param i int
+ * @param i - int
  * @addtogroup usart
 **/
 #define __usart__int2char(i) (i + 48)

@@ -1,279 +1,252 @@
-#include <avr/io.h>
-#include <inttypes.h>
+/*
+Copyright (c) 2010 Tymon Tobolski
+ 
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+ 
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+ 
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 #include <util/delay.h>
 #include <avr/pgmspace.h>
 #include "lcd.h"
 
+#ifndef LCD_RS
+	#error "LCD_RS not defined"
+#endif
 
-//Initializes LCD
-void LCDinit(void)
-{
+#ifndef LCD_E
+	#error "LCD_E not defined"
+#endif
+
+#ifndef LCD_D4
+	#error "LCD_D4 not defined"
+#endif
+
+#ifndef LCD_D5
+	#error "LCD_D5 not defined"
+#endif
+
+#ifndef LCD_D6
+	#error "LCD_D6 not defined"
+#endif
+
+#ifndef LCD_D7
+	#error "LCD_D7 not defined"
+#endif
+
+#ifndef LCD_DP
+	#error "LCD_DP not defined"
+#endif
+
+#ifndef LCD_CP
+	#error "LCD_CP not defined"
+#endif
+
+#ifndef LCD_DDR
+	#error "LCD_DDR not defined"
+#endif
+
+#ifndef LCD_CDR
+	#error "LCD_CDR not defined"
+#endif
+
+
+LCD::LCD(){
 	_delay_ms(15);
-	LDP=0x00;
-	LCP=0x00;
-	LDDR|=1<<LCD_D7|1<<LCD_D6|1<<LCD_D5|1<<LCD_D4;
-	LCDR|=1<<LCD_E|1<<LCD_RS;
+	LCD_DP=0x00;
+	LCD_CP=0x00;
+	LCD_DDR|=1<<LCD_D7|1<<LCD_D6|1<<LCD_D5|1<<LCD_D4;
+	LCD_CDR|=1<<LCD_E|1<<LCD_RS;
     //--------- Write 0x03 -----------
-	LDP|=0<<LCD_D7|0<<LCD_D6|1<<LCD_D5|1<<LCD_D4;
-	LCP|=1<<LCD_E|0<<LCD_RS;		
+	LCD_DP|=0<<LCD_D7|0<<LCD_D6|1<<LCD_D5|1<<LCD_D4;
+	LCD_CP|=1<<LCD_E|0<<LCD_RS;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
+	LCD_CP&=~(1<<LCD_E);
 	_delay_ms(5);
 	//--------- Write 0x03 -----------
-	LDP|=0<<LCD_D7|0<<LCD_D6|1<<LCD_D5|1<<LCD_D4;
-	LCP|=1<<LCD_E|0<<LCD_RS;		
+	LCD_DP|=0<<LCD_D7|0<<LCD_D6|1<<LCD_D5|1<<LCD_D4;
+	LCD_CP|=1<<LCD_E|0<<LCD_RS;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
+	LCD_CP&=~(1<<LCD_E);
 	_delay_ms(1);
 	//--------- Write 0x03 ------------
-	LDP|=0<<LCD_D7|0<<LCD_D6|1<<LCD_D5|1<<LCD_D4;
-	LCP|=1<<LCD_E|0<<LCD_RS;		
+	LCD_DP|=0<<LCD_D7|0<<LCD_D6|1<<LCD_D5|1<<LCD_D4;
+	LCD_CP|=1<<LCD_E|0<<LCD_RS;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
+	LCD_CP&=~(1<<LCD_E);
 	_delay_ms(1);
 	//--------- Enable Four Bit Mode ----------
-	LDP&=0<<LCD_D7|0<<LCD_D6|1<<LCD_D5|0<<LCD_D4; //Write 0x2
-	LCP|=1<<LCD_E|0<<LCD_RS;		
+	LCD_DP&=0<<LCD_D7|0<<LCD_D6|1<<LCD_D5|0<<LCD_D4; //Write 0x2
+	LCD_CP|=1<<LCD_E|0<<LCD_RS;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
+	LCD_CP&=~(1<<LCD_E);
 	_delay_ms(1);
    //---------- Set Interface Length ----------
-	LDP|=0<<LCD_D7|0<<LCD_D6|1<<LCD_D5|0<<LCD_D4; //Write 0x2 - 4 bits
-	LCP|=1<<LCD_E|0<<LCD_RS;		
+	LCD_DP|=0<<LCD_D7|0<<LCD_D6|1<<LCD_D5|0<<LCD_D4; //Write 0x2 - 4 bits
+	LCD_CP|=1<<LCD_E|0<<LCD_RS;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
+	LCD_CP&=~(1<<LCD_E);
 	_delay_ms(1);
-	LDP|=1<<LCD_D7|0<<LCD_D6|0<<LCD_D5|0<<LCD_D4; //Write 0x8 - 2 lines, 5x7
-	LCP|=1<<LCD_E|0<<LCD_RS;		
+	LCD_DP|=1<<LCD_D7|0<<LCD_D6|0<<LCD_D5|0<<LCD_D4; //Write 0x8 - 2 lines, 5x7
+	LCD_CP|=1<<LCD_E|0<<LCD_RS;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
+	LCD_CP&=~(1<<LCD_E);
 	_delay_ms(1);
    //---------- Turn off the Display ----------
-	LDP&=0<<LCD_D7|0<<LCD_D6|0<<LCD_D5|0<<LCD_D4; //Write 0x0 
-	LCP|=1<<LCD_E|0<<LCD_RS;		
+	LCD_DP&=0<<LCD_D7|0<<LCD_D6|0<<LCD_D5|0<<LCD_D4; //Write 0x0 
+	LCD_CP|=1<<LCD_E|0<<LCD_RS;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
+	LCD_CP&=~(1<<LCD_E);
 	_delay_ms(1);
-	LDP|=1<<LCD_D7|0<<LCD_D6|0<<LCD_D5|0<<LCD_D4; //Write 0x8 
-	LCP|=1<<LCD_E|0<<LCD_RS;		
+	LCD_DP|=1<<LCD_D7|0<<LCD_D6|0<<LCD_D5|0<<LCD_D4; //Write 0x8 
+	LCD_CP|=1<<LCD_E|0<<LCD_RS;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
+	LCD_CP&=~(1<<LCD_E);
 	_delay_ms(1);
    //------------ Clear the Display -----------
-	LDP&=0<<LCD_D7|0<<LCD_D6|0<<LCD_D5|0<<LCD_D4; //Write 0x0 
-	LCP|=1<<LCD_E|0<<LCD_RS;		
+	LCD_DP&=0<<LCD_D7|0<<LCD_D6|0<<LCD_D5|0<<LCD_D4; //Write 0x0 
+	LCD_CP|=1<<LCD_E|0<<LCD_RS;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
+	LCD_CP&=~(1<<LCD_E);
 	_delay_ms(1);
-	LDP|=0<<LCD_D7|0<<LCD_D6|0<<LCD_D5|1<<LCD_D4; //Write 0x1
-	LCP|=1<<LCD_E|0<<LCD_RS;		
+	LCD_DP|=0<<LCD_D7|0<<LCD_D6|0<<LCD_D5|1<<LCD_D4; //Write 0x1
+	LCD_CP|=1<<LCD_E|0<<LCD_RS;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
+	LCD_CP&=~(1<<LCD_E);
 	_delay_ms(1);
    //-------- Set Cursor Move Direction --------
-	LDP&=0<<LCD_D7|0<<LCD_D6|0<<LCD_D5|0<<LCD_D4; //Write 0x0 
-	LCP|=1<<LCD_E|0<<LCD_RS;		
+	LCD_DP&=0<<LCD_D7|0<<LCD_D6|0<<LCD_D5|0<<LCD_D4; //Write 0x0 
+	LCD_CP|=1<<LCD_E|0<<LCD_RS;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
+	LCD_CP&=~(1<<LCD_E);
 	_delay_ms(1);
-	LDP|=0<<LCD_D7|1<<LCD_D6|1<<LCD_D5|0<<LCD_D4; //Write 0x6 - Increment the Cursor
-	LCP|=1<<LCD_E|0<<LCD_RS;		
+	LCD_DP|=0<<LCD_D7|1<<LCD_D6|1<<LCD_D5|0<<LCD_D4; //Write 0x6 - Increment the Cursor
+	LCD_CP|=1<<LCD_E|0<<LCD_RS;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
+	LCD_CP&=~(1<<LCD_E);
 	_delay_ms(1);
    //---------- Enable Display/Cursor ----------
-	LDP&=0<<LCD_D7|0<<LCD_D6|0<<LCD_D5|0<<LCD_D4; //Write 0x0 
-	LCP|=1<<LCD_E|0<<LCD_RS;		
+	LCD_DP&=0<<LCD_D7|0<<LCD_D6|0<<LCD_D5|0<<LCD_D4; //Write 0x0 
+	LCD_CP|=1<<LCD_E|0<<LCD_RS;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
+	LCD_CP&=~(1<<LCD_E);
 	_delay_ms(1);
-	LDP|=1<<LCD_D7|1<<LCD_D6|1<<LCD_D5|1<<LCD_D4; //Write 0xF - Display on, cursor on, blink on 
-	LCP|=1<<LCD_E|0<<LCD_RS;		
+	LCD_DP|=1<<LCD_D7|1<<LCD_D6|1<<LCD_D5|1<<LCD_D4; //Write 0xF - Display on, cursor on, blink on 
+	LCD_CP|=1<<LCD_E|0<<LCD_RS;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
-	_delay_ms(1);
-}			
-
-//Sends Char to LCD
-void LCDsendChar(uint8_t ch)		
-{	 
-	//4 MSB bits
-	LDP=((ch>>2)&0b00111100);
-	LCP|=1<<LCD_RS|1<<LCD_E;
-	_delay_ms(1);
-	LCP&=0<<LCD_E|0<<LCD_RS;	
-	_delay_ms(1);
-    //4 LSB bits
-	LDP=((ch<<2)&0b00111100);
-	LCP|=1<<LCD_RS|1<<LCD_E;
-	_delay_ms(1);
-	LCP&=0<<LCD_E|0<<LCD_RS;	
+	LCD_CP&=~(1<<LCD_E);
 	_delay_ms(1);
 }
-
-//Sends Command to LCD
-void LCDsendCommand(uint8_t cmd)	
-{
+	
+void LCD::cmd(unsigned char c){
 	//4 MSB bits
-	LDP=((cmd>>2)&0b00111100);
-	LCP|=1<<LCD_E;		
+	LCD_DP=((c>>2)&0b00111100);
+	LCD_CP|=1<<LCD_E;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
+	LCD_CP&=~(1<<LCD_E);
 	_delay_ms(1);
 	//4 LSB bits
-	LDP=((cmd<<2)&0b00111100);
-	LCP|=1<<LCD_E;		
+	LCD_DP=((c<<2)&0b00111100);
+	LCD_CP|=1<<LCD_E;		
 	_delay_ms(1);
-	LCP&=~(1<<LCD_E);
-	_delay_ms(1);			
+	LCD_CP&=~(1<<LCD_E);
+	_delay_ms(1);
 }
 
-//Clears LCD
-void LCDclr(void)				
-{
-	LCDsendCommand(0x01);
+void LCD::clear(){
+	cmd(0x01);
 }
 
-//LCD cursor home
-void LCDhome(void)			
-{
-	LCDsendCommand(0x02);
-}
-
-//Outputs string to LCD
-void LCDstring(uint8_t* data, uint8_t nBytes)	
-{
-register uint8_t i;
-
-	// check to make sure we have a good pointer
-	if (!data) return;
-
-	// print data
-	for(i=0; i<nBytes; i++)
-	{
-		LCDsendChar(data[i]);
-	}
-
-}
-
-//Cursor to X Y position
-void LCDGotoXY(uint8_t x, uint8_t y)	
-{
-#define LCD_DDRAM               7	//set DD RAM address
-
-#define LCD_LINE0_DDRAMADDR		0x00
-#define LCD_LINE1_DDRAMADDR		0x40
-#define LCD_LINE2_DDRAMADDR		0x14
-#define LCD_LINE3_DDRAMADDR		0x54
-
-	register uint8_t DDRAMAddr;
+void LCD::gotoxy(unsigned char x, unsigned char y){
 	// remap lines into proper order
-	switch(y)
-	{
-	case 0:  DDRAMAddr = LCD_LINE0_DDRAMADDR + x; break;
-	case 1:  DDRAMAddr = LCD_LINE1_DDRAMADDR + x; break;
-	case 2:  DDRAMAddr = LCD_LINE2_DDRAMADDR + x; break;
-	case 3:  DDRAMAddr = LCD_LINE3_DDRAMADDR + x; break;
-	default: DDRAMAddr = LCD_LINE0_DDRAMADDR + x;
-	}
-	// set data address
-	LCDsendCommand(1<<LCD_DDRAM | DDRAMAddr);	
-} 
-
-//Scrol n of characters Right
-void LCDshiftLeft(uint8_t n)	
-{
-uint8_t i;
-
-	for (i=0;i<n;i++)
-	{
-		LCDsendCommand(0x1E);
+	switch(y){
+		case 0:  cmd(1<<7 | (0x00 + x)); break;
+		case 1:  cmd(1<<7 | (0x40 + x)); break;
+		case 2:  cmd(1<<7 | (0x14 + x)); break;
+		case 3:  cmd(1<<7 | (0x54 + x)); break;
+		default: cmd(1<<7 | (0x00 + x));
 	}
 }
 
-//Scrol n of characters Left
-void LCDshiftRight(uint8_t n)	
-{
-uint8_t i;
-
-	for (i=0;i<n;i++)
-	{
-		LCDsendCommand(0x18);
+void LCD::define(const unsigned char * dfn, unsigned char code){
+	unsigned char a = (code << 3) | 0x40;
+	for(int i=0; i<8; i++){
+		cmd(a++);
+		*this << (unsigned char)pgm_read_byte(dfn+1);
 	}
 }
 
-//displays LCD cursor
-void LCDcursorOn(void) 
-{
-	LCDsendCommand(0x0E);
+void LCD::shift(char n){
+	if(n > 0) while(n--) cmd(0x14); // shift right
+	else while(n++) cmd(0x10); // shift left
 }
 
-//displays LCD blinking cursor
-void LCDcursorOnBlink(void)	
-{
-	LCDsendCommand(0x0F);
+void LCD::cursorOn(){
+	cmd(0x0E);
 }
 
-//Turns OFF cursor
-void LCDcursorOFF(void)	
-{
-	LCDsendCommand(0x0C);
+void LCD::cursorOff(){
+	cmd(0x0C);
 }
 
-//Blanks LCD
-void LCDblank(void)		
-{
-	LCDsendCommand(0x08);
+void LCD::cursorBlink(){
+	cmd(0x0F);
 }
 
-//Shows LCD
-void LCDvisible(void)		
-{
-	LCDsendCommand(0x0C);
+void LCD::blank(){
+	cmd(0x08);
 }
 
-//Moves cursor by n poisitions left
-void LCDcursorLeft(uint8_t n)	
-{
-uint8_t i;
-
-	for (i=0;i<n;i++)
-	{
-		LCDsendCommand(0x10);
-	}
+void LCD::visible(){
+	cmd(0x0C);
 }
 
-//Moves cursor by n poisitions left
-void LCDcursorRight(uint8_t n)	
-{
-uint8_t i;
-
-	for (i=0;i<n;i++)
-	{
-		LCDsendCommand(0x14);
-	}
+LCD & LCD::operator<<(const unsigned char c){
+	LCD_DP=((c>>2)&0b00111100);
+	LCD_CP|=1<<LCD_RS|1<<LCD_E;
+	_delay_ms(1);
+	LCD_CP&=0<<LCD_E|0<<LCD_RS;	
+	_delay_ms(1);
+    //4 LSB bits
+	LCD_DP=((c<<2)&0b00111100);
+	LCD_CP|=1<<LCD_RS|1<<LCD_E;
+	_delay_ms(1);
+	LCD_CP&=0<<LCD_E|0<<LCD_RS;	
+	_delay_ms(1);
+	return *this;
 }
 
-//Copies string from flash memory to LCD at x y position
-void CopyStringtoLCD(const uint8_t *FlashLoc, uint8_t x, uint8_t y)
-{
-	uint8_t i;
-	LCDGotoXY(x,y);
-	for(i=0;(uint8_t)pgm_read_byte(&FlashLoc[i]);i++)
-	{
-		LCDsendChar((uint8_t)pgm_read_byte(&FlashLoc[i]));
-	}
+LCD & LCD::operator<<(const char c){
+	*this << (unsigned char)c;
+	return *this;
 }
 
-//defines char symbol in CGRAM
-void LCDdefinechar(const uint8_t *pc, uint8_t code)
-{
-	uint8_t a;
-	uint16_t i;
-	a=(code<<3)|0x40;
-	for (i=0; i<8; i++){
-		LCDsendCommand(a++);
-		LCDsendChar((uint8_t)pgm_read_byte(&pc[i]));
-		}
+LCD & LCD::operator<<(char* string){
+	while(*string != '\0') *this << *string++;
+	return *this;
 }
 
+LCD & LCD::operator<<(const int number){
+	
+	return *this;
+}
+
+LCD & LCD::operator<<(const long number){
+	
+	return *this;
+}

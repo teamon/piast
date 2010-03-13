@@ -55,7 +55,7 @@ public:
 	/**
 	 * Adds character to the end of buffer
 	 * 
-	 * @param c character to add
+	 * @param c - character to add
 	**/
 	void push(char c);
 	

@@ -62,7 +62,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  * Creates new object of type Usart0 and registers USART receive interrupt
  * 
- * @param u name of USART0 variable
+ * @param u - name of USART0 variable
  * @ingroup usart
 **/
 #define USART0(u) Usart0 u; ISR(USART0_RX_vect){ int c; c = UDR0; u.push(c); }
@@ -72,7 +72,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  * Creates new object of type Usart1 and registers USART receive interrupt
  * 
- * @param u name of USART1 variable
+ * @param u - name of USART1 variable
  * @ingroup usart
 **/
 #define USART1(u) Usart1 u; ISR(USART1_RX_vect){ int c; c = UDR1; u.push(c); }
@@ -89,7 +89,7 @@ public:
 	/**
 	 * Pushes character into input buffer
 	 * 
-	 * @param c character to push
+	 * @param c - character to push
 	**/
 	void push(char c);
 	
@@ -110,7 +110,7 @@ public:
 	/**
 	 * Sends unsigned char to Usart
 	 * 
-	 * @param c character
+	 * @param c - character
 	 * @return Usart object
 	**/
 	Usart & operator<<(const unsigned char c);
@@ -118,7 +118,7 @@ public:
 	/**
 	 * Sends char to Usart
 	 * 
-	 * @param c character
+	 * @param c - character
 	 * @return Usart object
 	**/
 	Usart & operator<<(const char c);
@@ -126,7 +126,7 @@ public:
 	/**
 	 * Sends string to Usart
 	 * 
-	 * @param string string (char* pointer)
+	 * @param string - string (char* pointer)
 	 * @return Usart object
 	**/
 	Usart & operator<<(char* string);
@@ -134,7 +134,7 @@ public:
 	/**
 	 * Sends number to Usart
 	 * 
-	 * @param number integer number
+	 * @param number - integer number
 	 * @return Usart object
 	**/
 	Usart & operator<<(const int number);
@@ -142,7 +142,7 @@ public:
 	/**
 	 * Sends number to Usart
 	 * 
-	 * @param number long number
+	 * @param number - long number
 	 * @return Usart object
 	**/
 	Usart & operator<<(const long number);
@@ -150,7 +150,7 @@ public:
 	/**
 	 * Reads char from Usart
 	 * 
-	 * @param c char variable to write to
+	 * @param c - char variable to write to
 	 * @return Usart object
 	**/
 	Usart & operator>>(unsigned char &c);
@@ -158,7 +158,7 @@ public:
 	/**
 	 * Reads number from Usart
 	 * 
-	 * @param c int variable to write to
+	 * @param c - int variable to write to
 	 * @return Usart object
 	**/
 	Usart & operator>>(int &c);
@@ -166,7 +166,7 @@ public:
 	/**
 	 * Sends byte to Usart
 	 * 
-	 * @param byte character
+	 * @param byte - character
 	**/
 	void sendByte(unsigned char byte){};
 	
