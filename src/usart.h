@@ -21,72 +21,181 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-
-/** 
- * USART Library.
-**/
-
-
 #ifndef _USART_H_
 #define _USART_H_
 
-#define USART_BAUD 9600
+/**
+ * @defgroup usart USART Library for Atmega128
+ * 
+ * @brief Interrupt UART library for Atmega128 using the built-in UART with transmit
+ * and receive circular buffers. 
+ *
+ * This library can be used to transmit and receive data through the built in UART. 
+ *
+ * An interrupt is generated when the UART has finished transmitting or
+ * receiving a byte. The interrupt handling routines use circular buffers
+ * for buffering received and transmitted data.
+ * 
+ * @version 0.1
+ * @author Tymon Tobolski http://teamon.eu
+**/
 
-#define __usart__char2int(c) (c - 48)
-#define __usart__int2char(c) (c + 48)
+#include "buffer.h"
 
-#if defined (__AVR_ATmega32__)
-#	define USART(u) Usart u; ISR(USART_RXC_vect){ u.read(UDR); }
-#elif defined (__AVR_ATmega128__)
-#	define USART0(u) Usart u = Usart(0); ISR(USART0_RX_vect){ int c; c = UDR0; u.read(c); }
-#	define USART1(u) Usart u = Usart(1); ISR(USART1_RX_vect){ int c; c = UDR1; u.read(c); }
-#else
-#	error "Device not supported"
+/**
+ * @file usart.h
+ */
+
+/**
+ * @def USART_BAUD
+ * 
+ * Defines USART baud rate if not previously defined
+ * 
+ * @ingroup usart
+**/
+#ifndef USART_BAUD
+#define USART_BAUD 9600L
 #endif
 
-struct UsartBufferItem {
-	char character;
-	UsartBufferItem* next;
-};
+/**
+ * @def USART0(u)
+ * 
+ * Creates new object of type Usart0 and registers USART receive interrupt
+ * 
+ * @param u name of USART0 variable
+ * @ingroup usart
+**/
+#define USART0(u) Usart0 u; ISR(USART0_RX_vect){ int c; c = UDR0; u.push(c); }
 
-class UsartBuffer {
-public:
-	UsartBuffer();
-	void push(char c);
-	void pop();
-	void clear();
-	bool empty();
-	char * front();
-	int size();
-	unsigned char read();
-	
-private:
-	int _counter;
-	UsartBufferItem *_head, *_tail;
-};
+/**
+ * @def USART1(u)
+ * 
+ * Creates new object of type Usart1 and registers USART receive interrupt
+ * 
+ * @param u name of USART1 variable
+ * @ingroup usart
+**/
+#define USART1(u) Usart1 u; ISR(USART1_RX_vect){ int c; c = UDR1; u.push(c); }
 
-
+/**
+ * @class Usart
+ * 
+ * Base class for Usart0 and Usart1
+ * @ingroup usart
+**/
 class Usart {
 public:
-	Usart(char n);
-	void read(char c);
-	unsigned char get();
-	bool empty();
-	void sendByte(unsigned char byte);	
-	void sendNumber(long number);
 	
+	/**
+	 * Pushes character into input buffer
+	 * 
+	 * @param c character to push
+	**/
+	void push(char c);
+	
+	/**
+	 * Reads single character from Usart input buffer
+	 * 
+	 * @return character
+	**/
+	unsigned char read();
+	
+	/**
+	 * Checks if Usart input buffer is empty
+	 * 
+	 * @return true if there are items in buffer, otherwise false
+	**/
+	bool empty();
+	
+	/**
+	 * Sends unsigned char to Usart
+	 * 
+	 * @param c character
+	 * @return Usart object
+	**/
 	Usart & operator<<(const unsigned char c);
+	
+	/**
+	 * Sends char to Usart
+	 * 
+	 * @param c character
+	 * @return Usart object
+	**/
 	Usart & operator<<(const char c);
+	
+	/**
+	 * Sends string to Usart
+	 * 
+	 * @param string string (char* pointer)
+	 * @return Usart object
+	**/
 	Usart & operator<<(char* string);
+	
+	/**
+	 * Sends number to Usart
+	 * 
+	 * @param number integer number
+	 * @return Usart object
+	**/
 	Usart & operator<<(const int number);
+	
+	/**
+	 * Sends number to Usart
+	 * 
+	 * @param number long number
+	 * @return Usart object
+	**/
 	Usart & operator<<(const long number);
 	
+	/**
+	 * Reads char from Usart
+	 * 
+	 * @param c char variable to write to
+	 * @return Usart object
+	**/
 	Usart & operator>>(unsigned char &c);
+	
+	/**
+	 * Reads number from Usart
+	 * 
+	 * @param c int variable to write to
+	 * @return Usart object
+	**/
 	Usart & operator>>(int &c);
 	
+	/**
+	 * Sends byte to Usart
+	 * 
+	 * @param byte character
+	**/
+	void sendByte(unsigned char byte){};
+	
 private:
-	UsartBuffer buf; /**< Input buffer */
-	char _n;
+	Buffer buf; /**< Input buffer */
+};
+
+/**
+ * @class Usart0
+ * 
+ * Atmega128 USART0 interface
+ * @ingroup usart
+**/
+class Usart0: public Usart {
+public:
+	Usart0();
+	void sendByte(unsigned char byte);
+};
+
+/**
+ * @class Usart1
+ * 
+ * Atmega128 interface
+ * @ingroup usart
+**/
+class Usart1: public Usart {
+public:
+	Usart1();
+	void sendByte(unsigned char byte);
 };
 
 #endif
