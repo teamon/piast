@@ -1,5 +1,5 @@
 #include "piast.h"
-#include "buffer.h"
+#include "usart.h"
 
 #include "lcd.h"
 
@@ -64,5 +64,4 @@ int main() {
 			delay_200ms();
 		}	
 	}
-
 }
