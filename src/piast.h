@@ -32,6 +32,9 @@
 **/
 #define config_save(addr, value) eeprom_write_word((uint16_t*)addr, (uint16_t)value)
 
+#define KEY_DOWN(n) (PINC & _BV(n))
+
+
 #define BRIGHTNESS 0
 #define CONTRAST 2
 
