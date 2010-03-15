@@ -50,7 +50,6 @@ void show_menu_pos(){
 
 char  website[] = "yayetee.com";
 
-
 uint8_t heart[] PROGMEM = {
 	0b00000000,
 	0b00001010,
@@ -85,8 +84,6 @@ uint8_t left_arrow[] PROGMEM = {
 };
 
 
-
-
 SIGNAL (SIG_ADC)
 {	
 	int val = (ADCL|(ADCH<<8))*10 / 102; //read 10-bit value from two 8 bit registers (right adjustment)
@@ -117,9 +114,9 @@ ISR (TIMER1_OVF_vect)
 
 void ADCinit(void)
 {
-  ADCSRA=_BV(ADEN) | _BV(ADSC) | _BV(ADIE) | _BV(ADPS2) | _BV(ADPS0);; //ADCenable, Interrupt Enable, ADCstarConversion,  
-  ADMUX=0x00; //Vref external, right adjustment, start from adc0
-  DDRF=0x00;
+  ADCSRA = _BV(ADEN) | _BV(ADSC) | _BV(ADIE) | _BV(ADPS2) | _BV(ADPS0);; //ADCenable, Interrupt Enable, ADCstarConversion,  
+  ADMUX = 0x00; //Vref external, right adjustment, start from adc0
+  DDRF = 0x00;
   //do not forget to enable interrupts using sei()
 }
 
@@ -181,27 +178,27 @@ int main() {
 		//lcd << "     ";
 		//lcd.gotoxy(5,0);
 		//lcd << joy.y << '%';
-		
+
 		//lcd.gotoxy(11,0);
 		//lcd << "     ";
 		//lcd.gotoxy(11,0);
 		//lcd << joy.z << '%';
-		
+
 		// if moving right
-		while(joy.x > 70){
+		while(joy.x > 20){
 			if(menu_pos < sizeof(menu)/sizeof(menu[0])-1){
 				menu_pos++;
 				show_menu_pos();
-				_delay_ms(200);
+				_delay_ms(100);
 			}
 		}
-		
+
 		// if moving left
-		while(joy.x < -70){
+		while(joy.x < -20){
 			if(menu_pos > 0){
 				menu_pos--;
 				show_menu_pos();
-				_delay_ms(200);
+				_delay_ms(100);
 			}
 		}
 		
@@ -220,13 +217,10 @@ void menu_contrast(){
 
 	lcd << "CONTRAST:";
 	for(;;){
-		lcd.gotoxy(10,0);
-		lcd << contrast;
-		lcd << "   ";
+		lcd.gotoxy(10, 0);
+		lcd << (1023-contrast) << "  ";
 		
-		if(joy.z > 50) contrast += 5;
-		else if(joy.z < -50) contrast -= 5;
-		
+		if(joy.z > 20 || joy.z < -20) contrast -= joy.z/20;
 		if (contrast < 0) contrast = 0;
 		else if (contrast > 1023) contrast = 1020;
 		
@@ -239,6 +233,16 @@ void menu_contrast(){
 			lcd.clear();
 			return;
 		}
+		
+		if(key_pressed(1)){
+			contrast = config_read(CONTRAST);
+			lcd.clear();
+			lcd.gotoxy(3, 1); 
+			lcd << "CANCELED";
+			_delay_ms(500);
+			lcd.clear();
+			return;
+		}
 	}
 }
 
@@ -247,13 +251,10 @@ void menu_brightness(){
 	lcd.gotoxy(0,0);
 	lcd << "BRIGHTNESS:";
 	for(;;){
-		lcd.gotoxy(12,0);
-		lcd << brightness;
-		lcd << "   ";
+		lcd.gotoxy(12, 0);
+		lcd << brightness << "   ";
 		
-		if(joy.z > 50) brightness += 5;
-		else if(joy.z < -50) brightness -= 5;
-		
+		if(joy.z > 20 || joy.z < -20) brightness += joy.z/20;		
 		if (brightness < 0) brightness = 0;
 		else if (brightness > 1023) brightness = 1020;
 		
@@ -262,6 +263,16 @@ void menu_brightness(){
 			lcd.clear();
 			lcd.gotoxy(5, 1);
 			lcd << "SAVED!";
+			_delay_ms(500);
+			lcd.clear();
+			return;
+		}
+		
+		if(key_pressed(1)){
+			brightness = config_read(BRIGHTNESS);
+			lcd.clear();
+			lcd.gotoxy(3, 1); 
+			lcd << "CANCELED";
 			_delay_ms(500);
 			lcd.clear();
 			return;
