@@ -30,11 +30,9 @@ void menu_contrast(){
 	lcd << "CONTRAST:";
 	for(;;){
 		lcd.gotoxy(10,0);
-		lcd << contrast;		
+		lcd << (1023-contrast) << " ";		
 		
-		if(joy.z > 50) contrast+=5;
-		else if(joy.z < -50) contrast-=5;
-		
+		if(joy.z > 20 || joy.z<-20) contrast-=joy.z/20;
 		if (contrast<0) contrast=0;
 		else if (contrast >1023) contrast=1020;
 		
@@ -48,6 +46,17 @@ void menu_contrast(){
 			lcd.clear();
 			return;
 		}
+		if(KEY_DOWN(1)){
+			while(KEY_DOWN(0));
+			contrast = config_read(CONTRAST);
+			lcd.clear();
+			lcd.gotoxy(3,1); 
+			lcd << "CANCELED";
+			_delay_ms(500);
+			lcd.clear();
+			return;
+		
+		}
 	}
 }
 
@@ -60,9 +69,7 @@ void menu_brightness(){
 		lcd << brightness;
 		lcd << "   ";
 		
-		if(joy.z > 50) brightness+=5;
-		else if(joy.z < -50) brightness-=5;
-		
+		if(joy.z > 20 || joy.z<-20) brightness+=joy.z/20;
 		if (brightness<0) brightness=0;
 		else if (brightness >1023) brightness=1020;
 		
@@ -104,19 +111,7 @@ void show_menu_pos(){
 
 char  website[] = "yayetee.com";
 
- //lcd init
 
-uint8_t heart[] PROGMEM= 
-{
-0b00000000,
-0b00001010,
-0b00011111,
-0b00011111,
-0b00011111,
-0b00001110,
-0b00000100,
-0b00000000
-};
 
 uint8_t right_arrow[] PROGMEM = {
 	0b00000000,
@@ -139,6 +134,7 @@ uint8_t left_arrow[] PROGMEM = {
 	0b00000110,
 	0b00000010
 };
+
 
 
 volatile int axis=0;
@@ -205,21 +201,21 @@ int main() {
 	KEYinit();
 	sei();
 	
-	lcd.define(heart,0);
-	
-	if (contrast = -1) contrast = 500;
-	if (brightness = -1) brightness = 500;
+	if (contrast == -1) contrast = 500;
+	if (brightness == -1) brightness = 500;
 	
 	
 	lcd.define(left_arrow,1);
 	lcd.define(right_arrow,2);
+	
 	//config_save(BRIGHTNESS, 15);
 	//config_save(CONTRAST, 10);
 	
 	//brightness= config_read(BRIGHTNESS);
 	//contrast = config_read(CONTRAST);
 
-	lcd.gotoxy(0,0);
+
+	lcd.gotoxy(0,1);
 	lcd << "   Spierdalaj!   ";
 	_delay_ms(1000);
 	lcd.clear();
@@ -246,19 +242,19 @@ int main() {
 		//lcd.gotoxy(11,0);
 		//lcd << joy.z << '%';
 		
-		while(joy.x > 70){
+		while(joy.x > 20){
 			if(menu_pos < sizeof(menu)/sizeof(menu[0])-1){
 				menu_pos++;
 				show_menu_pos();
-				_delay_ms(200);
+				_delay_ms(100);
 			}
 		}
 		
-		while(joy.x < -70){
+		while(joy.x < -20){
 			if(menu_pos > 0){
 				menu_pos--;
 				show_menu_pos();
-				_delay_ms(200);
+				_delay_ms(100);
 			}
 		}
 		
