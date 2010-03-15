@@ -15,6 +15,7 @@ struct MenuItem {
 };
 
 // menu functions
+void menu_settings();
 void menu_contrast();
 void menu_brightness();
 
@@ -131,7 +132,7 @@ void KEYSinit() {
 }
 
 void home() {
-    while (1) {
+    // while (1) {
         lcd.gotoxy(0, 0);
         lcd << "     ";
         lcd.gotoxy(0, 0);
@@ -147,11 +148,7 @@ void home() {
         lcd.gotoxy(11, 0);
         lcd << joy.z << '%';
 
-        if (key_pressed(0) || key_pressed(1)) {
-            lcd.clear();
-            break;
-        }
-    }
+    // }
 }
 
 int main() {
@@ -184,43 +181,52 @@ int main() {
     lcd.clear();
 
 
-    home();
     while (1) {
-        show_menu_pos();
-        _delay_ms(10); // must be (wtf?)
+		home();
 
-
-        // if moving right
-        while (joy.x > 20) {
-            if (menu_pos < sizeof (menu) / sizeof (menu[0]) - 1) {
-                menu_pos++;
-                show_menu_pos();
-                _delay_ms(100);
-            }
-        }
-
-        // if moving left
-        while (joy.x < -20) {
-            if (menu_pos > 0) {
-                menu_pos--;
-                show_menu_pos();
-                _delay_ms(100);
-            }
-        }
-
-        if (key_pressed(1)){
+		if (key_pressed(0) || key_pressed(1)) {
             lcd.clear();
-            home();
-        }
-
-        if (key_pressed(0)) {
-            menu[menu_pos].func();
+			menu_settings();
         }
     }
 }
 
 
 // menu functions
+
+void menu_settings(){
+	while(1){
+		show_menu_pos();
+	    _delay_ms(10); // must be (wtf?)
+
+	    // if moving right
+	    while (joy.x > 20) {
+	        if (menu_pos < sizeof (menu) / sizeof (menu[0]) - 1) {
+	            menu_pos++;
+	            show_menu_pos();
+	            _delay_ms(100);
+	        }
+	    }
+
+	    // if moving left
+	    while (joy.x < -20) {
+	        if (menu_pos > 0) {
+	            menu_pos--;
+	            show_menu_pos();
+	            _delay_ms(100);
+	        }
+	    }
+
+	    if (key_pressed(1)){
+	        lcd.clear();
+	        return;
+	    }
+
+	    if (key_pressed(0)) {
+	        menu[menu_pos].func();
+	    }
+	}
+}
 
 void menu_contrast() {
     lcd.clear();
