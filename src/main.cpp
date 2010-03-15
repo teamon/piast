@@ -149,21 +149,22 @@ int main() {
 	lcd.define(right_arrow, 2);
 	
 	// if eeprom is cleared
-	if (contrast == -1) contrast = 500;
-	if (brightness == -1) brightness = 500;
+	if (contrast == -1){
+            contrast = 500;
+            config_save(CONTRAST, contrast);
+        }
+	if (brightness == -1) {
+            brightness = 500;
+            config_save(BRIGHTNESS, brightness);
+        }
 
 	// welcome message
 	lcd.gotoxy(0,0);
-	lcd << "   Spierdalaj!   ";
+	lcd << "     WITAM!    ";
 	_delay_ms(1000);
 	lcd.clear();
 	
-	//lcd.gotoxy(1,1);
-	//lcd << (char) 0;
-	//lcd << (int) contrast;
-	//lcd << (char) 0;
-	//lcd << (int) brightness;
-	
+
 	while(1)
 	{
 		show_menu_pos();
@@ -236,7 +237,7 @@ void menu_contrast(){
 			contrast = config_read(CONTRAST);
 			lcd.clear();
 			lcd.gotoxy(3, 1); 
-			lcd << "CANCELED";
+			lcd << "CANCELED!";
 			_delay_ms(500);
 			lcd.clear();
 			return;
