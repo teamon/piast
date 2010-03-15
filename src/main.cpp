@@ -11,8 +11,6 @@ struct Joystick {
 struct MenuItem {
 	const char* desc;
 	void (*func)();
-	
-	char ** i;
 };
 
 // menu functions
@@ -151,8 +149,8 @@ int main() {
 	lcd.define(right_arrow, 2);
 	
 	// if eeprom is cleared
-	if (contrast = -1) contrast = 500;
-	if (brightness = -1) brightness = 500;
+	if (contrast == -1) contrast = 500;
+	if (brightness == -1) brightness = 500;
 
 	// welcome message
 	lcd.gotoxy(0,0);
