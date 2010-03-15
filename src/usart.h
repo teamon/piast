@@ -78,6 +78,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define USART1(u) Usart1 u; ISR(USART1_RX_vect){ int c; c = UDR1; u.push(c); }
 
 /**
+ * @def USART32(u)
+ * 
+ * Creates new object of type Usart0 and registers USART receive interrupt
+ * 
+ * @param u - name of USART0 variable
+ * @ingroup usart
+**/
+#define USART32(u) Usart32 u; ISR(USART_RXC_vect){ int c; c = UDR; u.push(c); }
+
+/**
  * @class Usart
  * 
  * Base class for Usart0 and Usart1
@@ -195,6 +205,18 @@ public:
 class Usart1: public Usart {
 public:
 	Usart1();
+	void sendByte(unsigned char byte);
+};
+
+/**
+ * @class Usart32
+ * 
+ * Atmega32 USART interface
+ * @ingroup usart
+**/
+class Usart32: public Usart {
+public:
+	Usart32();
 	void sendByte(unsigned char byte);
 };
 

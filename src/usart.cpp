@@ -111,34 +111,49 @@ Usart & Usart::operator>>(int &c){
 // USARTn specific methods
 
 // USART0
-Usart0::Usart0(){
-	int ubrr = (int)(F_CPU/USART_BAUD/16) - 1;
-	
-	UBRR0H = (unsigned char) (ubrr >> 8);
-	UBRR0L = (unsigned char) ubrr;
-	UCSR0B = (1 << RXCIE0) | (1 << RXEN0) | (1 << TXEN0);
-	UCSR0C = (1 << USBS0) | (1 << UCSZ01) | (3 << UCSZ00);
-}
-
-void Usart0::sendByte(unsigned char byte){
-	while (!(UCSR0A & (1<<UDRE0)));
-	UDR0 = byte;
-}
+// Usart0::Usart0(){
+// 	int ubrr = (int)(F_CPU/USART_BAUD/16) - 1;
+// 	
+// 	UBRR0H = (unsigned char) (ubrr >> 8);
+// 	UBRR0L = (unsigned char) ubrr;
+// 	UCSR0B = (1 << RXCIE0) | (1 << RXEN0) | (1 << TXEN0);
+// 	UCSR0C = (1 << USBS0) | (1 << UCSZ01) | (3 << UCSZ00);
+// }
+// 
+// void Usart0::sendByte(unsigned char byte){
+// 	while (!(UCSR0A & (1<<UDRE0)));
+// 	UDR0 = byte;
+// }
 
 
 // USART1
-Usart1::Usart1(){
+// Usart1::Usart1(){
+// 	int ubrr = (int)(F_CPU/USART_BAUD/16) - 1;
+// 	
+// 	UBRR1H = (unsigned char) (ubrr >> 8);
+// 	UBRR1L = (unsigned char) ubrr;
+// 	UCSR1B = (1 << RXCIE1) | (1 << RXEN1) | (1 << TXEN1);
+// 	UCSR1C = (1 << USBS0) | (1 << UCSZ11) | (3 << UCSZ10);
+// }
+// 
+// void Usart1::sendByte(unsigned char byte){
+// 	while (!(UCSR1A & (1<<UDRE1)));
+// 	UDR1 = byte;
+// }
+
+// USART32
+Usart32::Usart32(){
 	int ubrr = (int)(F_CPU/USART_BAUD/16) - 1;
 	
-	UBRR1H = (unsigned char) (ubrr >> 8);
-	UBRR1L = (unsigned char) ubrr;
-	UCSR1B = (1 << RXCIE1) | (1 << RXEN1) | (1 << TXEN1);
-	UCSR1C = (1 << USBS0) | (1 << UCSZ11) | (3 << UCSZ10);
+	UBRRH = (unsigned char) (ubrr >> 8);
+	UBRRL = (unsigned char) ubrr;
+	UCSRB = (1 << RXCIE) | (1 << RXEN) | (1 << TXEN);
+	UCSRC = (1 << USBS) | (1 << UCSZ1) | (3 << UCSZ0);
 }
 
-void Usart1::sendByte(unsigned char byte){
-	while (!(UCSR1A & (1<<UDRE1)));
-	UDR1 = byte;
+void Usart32::sendByte(unsigned char byte){
+	while (!(UCSRA & (1<<UDRE)));
+	UDR = byte;
 }
 
 
