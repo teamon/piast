@@ -32,6 +32,11 @@
 **/
 #define config_save(addr, value) eeprom_write_word((uint16_t*)addr, (uint16_t)value)
 
+/**
+ * @def KEY_DOWN
+ * Check if key is pressed.
+ * @ingroup piast
+**/
 #define KEY_DOWN(n) (PINC & _BV(n))
 
 
@@ -39,6 +44,9 @@
 #define CONTRAST 2
 
 
+// headers
 
+// util.cpp
+bool key_pressed(int n);
 
 #endif

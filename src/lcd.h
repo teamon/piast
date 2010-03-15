@@ -149,6 +149,14 @@ public:
 	LCD & operator<<(const char c);
 	
 	/**
+	 * Sends char to LCD
+	 * 
+	 * @param string - string constant
+	 * @return LCD object
+	**/
+	LCD & operator<<(const char * string);
+	
+	/**
 	 * Sends string to LCD
 	 * 
 	 * @param string - string (char* pointer)

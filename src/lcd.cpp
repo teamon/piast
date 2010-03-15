@@ -237,6 +237,12 @@ LCD & LCD::operator<<(const char c){
 	return *this;
 }
 
+LCD & LCD::operator<<(const char * string){
+	*this << (char*)string;
+	return *this;
+}
+
+
 LCD & LCD::operator<<(char* string){
 	while(*string != '\0') *this << *string++;
 	return *this;
