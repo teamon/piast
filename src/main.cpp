@@ -27,37 +27,69 @@ Joystick joy;
 int contrast = config_read(CONTRAST);
 int brightness = config_read(BRIGHTNESS);
 
-unsigned int menu_pos = 0;
-MenuItem menu[] = {
-    {"   CONTRAST   ", menu_contrast},
-    {"  BRIGHTNESS  ", menu_brightness}
+uint8_t bar_center[] PROGMEM = {
+    0b00000000,
+    0b00000000,
+    0b00000100,
+    0b00000100,
+    0b00000100,
+    0b00000000,
+    0b00000000,
+    0b00000000
 };
 
-volatile int axis = 0;
-
-void show_menu_pos() {
-    lcd.gotoxy(0, 1);
-    if (menu_pos > 0) lcd << (char) 1;
-    else lcd << " ";
-
-    lcd << menu[menu_pos].desc;
-
-    if (menu_pos < sizeof (menu) / sizeof (menu[0]) - 1) lcd << (char) 2;
-    else lcd << " ";
-}
-
-
-
-char website[] = "yayetee.com";
-
-uint8_t heart[] PROGMEM = {
+uint8_t bar_left1[] PROGMEM = {
     0b00000000,
-    0b00001010,
-    0b00011111,
-    0b00011111,
-    0b00011111,
-    0b00001110,
-    0b00000100,
+    0b00000000,
+    0b00010100,
+    0b00010100,
+    0b00010100,
+    0b00000000,
+    0b00000000,
+    0b00000000
+};
+
+uint8_t bar_right1[] PROGMEM = {
+    0b00000000,
+    0b00000000,
+    0b00000101,
+    0b00000101,
+    0b00000101,
+    0b00000000,
+    0b00000000,
+    0b00000000
+};
+
+uint8_t bar_left2[] PROGMEM = {
+    0b00000000,
+    0b00000000,
+    0b00000001,
+    0b00000001,
+    0b00000001,
+    0b00000000,
+    0b00000000,
+    0b00000000
+};
+
+uint8_t bar_right2[] PROGMEM = {
+    0b00000000,
+    0b00000000,
+    0b00010000,
+    0b00010000,
+    0b00010000,
+    0b00000000,
+    0b00000000,
+    0b00000000
+};
+
+uint8_t bar_full[] PROGMEM = {
+    0b00000000,
+    0b00000000,
+    0b00010101,
+    0b00010101,
+    0b00010101,
+    0b00000000,
+    0b00000000,
     0b00000000
 };
 
@@ -82,6 +114,39 @@ uint8_t left_arrow[] PROGMEM = {
     0b00000110,
     0b00000010
 };
+
+void home_char_set() {
+    lcd.define(bar_center, 0);
+    lcd.define(bar_left1, 1);
+    lcd.define(bar_left2, 2);
+    lcd.define(bar_right1, 3);
+    lcd.define(bar_right2, 4);
+    lcd.define(bar_full, 5);
+}
+
+void home_gui() {
+    lcd.gotoxy(2, 1);
+    lcd << "X    Y    Z";
+}
+
+unsigned int menu_pos = 0;
+MenuItem menu[] = {
+    {"   CONTRAST   ", menu_contrast},
+    {"  BRIGHTNESS  ", menu_brightness}
+};
+
+volatile int axis = 0;
+
+void show_menu_pos() {
+    lcd.gotoxy(0, 1);
+    if (menu_pos > 0) lcd << (char) 0;
+    else lcd << " ";
+
+    lcd << menu[menu_pos].desc;
+
+    if (menu_pos < sizeof (menu) / sizeof (menu[0]) - 1) lcd << (char) 1;
+    else lcd << " ";
+}
 
 SIGNAL(SIG_ADC) {
     int val = (ADCL | (ADCH << 8))*10 / 102; //read 10-bit value from two 8 bit registers (right adjustment)
@@ -132,23 +197,70 @@ void KEYSinit() {
 }
 
 void home() {
-    // while (1) {
-        lcd.gotoxy(0, 0);
-        lcd << "     ";
-        lcd.gotoxy(0, 0);
-        lcd << joy.x << '%';
+    lcd.gotoxy(0, 0);
+    if (joy.x <= -100) {
+        lcd << "[" << char(5) << char(1) << " ]";
+    } else if (joy.x < -80) {
+        lcd << "[" << char(3) << char(1) << " ]";
+    } else if (joy.x < -60) {
+        lcd << "[" << char(2) << char(1) << " ]";
+    } else if (joy.x < -40) {
+        lcd << "[ " << char(1) << " ]";
+    } else if (joy.x <= 20) {
+        lcd << "[ " << char(0) << " ]";   
+    } else if (joy.x <= 40) {
+        lcd << "[ " << char(3) << " ]";
+    } else if (joy.x <= 60) {
+        lcd << "[ " << char(3) << char(4) << "]";
+    } else if (joy.x <= 80) {
+        lcd << "[ " << char(3) << char(1) << "]";
+    } else if (joy.x <= 100) {
+        lcd << "[ " << char(3) << char(5) << "]";
+    }
 
-        lcd.gotoxy(5, 0);
-        lcd << "     ";
-        lcd.gotoxy(5, 0);
-        lcd << joy.y << '%';
+    lcd.gotoxy(5, 0);
+    if (joy.y <= -100) {
+        
+        lcd << "[" << char(5) << char(1) << " ]";
+    } else if (joy.y < -80) {
+        lcd << "[" << char(3) << char(1) << " ]";
+    } else if (joy.y < -60) {
+        lcd << "[" << char(2) << char(1) << " ]";
+    } else if (joy.y < -40) {
+        lcd << "[ " << char(1) << " ]";
+    } else if (joy.y <= 20) {;
+        lcd << "[ " << char(0) << " ]";
+    } else if (joy.y <= 40) {
+        lcd << "[ " << char(3) << " ]";
+    } else if (joy.y <= 60) {
+        lcd << "[ " << char(3) << char(4) << "]";
+    } else if (joy.y <= 80) {
+        lcd << "[ " << char(3) << char(1) << "]";
+    } else if (joy.y <= 100) {
+        lcd << "[ " << char(3) << char(5) << "]";
+    }
 
-        lcd.gotoxy(11, 0);
-        lcd << "     ";
-        lcd.gotoxy(11, 0);
-        lcd << joy.z << '%';
+    lcd.gotoxy(10, 0);
+    if (joy.z <= -100) {
+        lcd << "[" << char(5) << char(1) << " ]";
+    } else if (joy.z < -80) {
+        lcd << "[" << char(3) << char(1) << " ]";
+    } else if (joy.z < -60) {
+        lcd << "[" << char(2) << char(1) << " ]";
+    } else if (joy.z < -40) {
+        lcd << "[ " << char(1) << " ]";
+    } else if (joy.z <= 20) {
+        lcd << "[ " << char(0) << " ]";
+    }  else if (joy.z <= 40) {
+        lcd << "[ " << char(3) << " ]";
+    } else if (joy.z <= 60) {
+        lcd << "[ " << char(3) << char(4) << "]";
+    } else if (joy.z <= 80) {
+        lcd << "[ " << char(3) << char(1) << "]";
+    } else if (joy.z <= 100) {
+        lcd << "[ " << char(3) << char(5) << "]";
+    }
 
-    // }
 }
 
 int main() {
@@ -159,10 +271,6 @@ int main() {
     PWMinit();
     KEYSinit();
     sei();
-
-    lcd.define(heart, 0);
-    lcd.define(left_arrow, 1);
-    lcd.define(right_arrow, 2);
 
     // if eeprom is cleared
     if (contrast == -1) {
@@ -180,13 +288,17 @@ int main() {
     _delay_ms(1000);
     lcd.clear();
 
+    //char set for home()
+    home_char_set();
+    //display home() GUI - once!
+    home_gui();
 
     while (1) {
-		home();
+        home();
 
-		if (key_pressed(0) || key_pressed(1)) {
+        if (key_pressed(0) || key_pressed(1)) {
             lcd.clear();
-			menu_settings();
+            menu_settings();
         }
     }
 }
@@ -194,38 +306,45 @@ int main() {
 
 // menu functions
 
-void menu_settings(){
-	while(1){
-		show_menu_pos();
-	    _delay_ms(10); // must be (wtf?)
+void menu_settings() {
+    //char set for menu
+    lcd.define(left_arrow, 0);
+    lcd.define(right_arrow, 1);
+    while (1) {
+        show_menu_pos();
+        _delay_ms(10); // must be (wtf?)
 
-	    // if moving right
-	    while (joy.x > 20) {
-	        if (menu_pos < sizeof (menu) / sizeof (menu[0]) - 1) {
-	            menu_pos++;
-	            show_menu_pos();
-	            _delay_ms(100);
-	        }
-	    }
+        // if moving right
+        while (joy.x > 20) {
+            if (menu_pos < sizeof (menu) / sizeof (menu[0]) - 1) {
+                menu_pos++;
+                show_menu_pos();
+                _delay_ms(100);
+            }
+        }
 
-	    // if moving left
-	    while (joy.x < -20) {
-	        if (menu_pos > 0) {
-	            menu_pos--;
-	            show_menu_pos();
-	            _delay_ms(100);
-	        }
-	    }
+        // if moving left
+        while (joy.x < -20) {
+            if (menu_pos > 0) {
+                menu_pos--;
+                show_menu_pos();
+                _delay_ms(100);
+            }
+        }
 
-	    if (key_pressed(1)){
-	        lcd.clear();
-	        return;
-	    }
+        if (key_pressed(1)) {
+            lcd.clear();
+            //char set for home()
+            home_char_set();
+            //display home() GUI - once!
+            home_gui();
+            return;
+        }
 
-	    if (key_pressed(0)) {
-	        menu[menu_pos].func();
-	    }
-	}
+        if (key_pressed(0)) {
+            menu[menu_pos].func();
+        }
+    }
 }
 
 void menu_contrast() {

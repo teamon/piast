@@ -188,7 +188,8 @@ void LCD::define(const unsigned char * dfn, unsigned char code){
 	unsigned char a = (code << 3) | 0x40;
 	for(int i=0; i<8; i++){
 		cmd(a++);
-		*this << (unsigned char)pgm_read_byte(dfn+i);
+//		*this << (unsigned char)*(dfn+i);
+                *this << (unsigned char)pgm_read_byte(dfn+i);
 	}
 }
 

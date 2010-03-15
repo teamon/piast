@@ -2,12 +2,12 @@ DEVICE      = atmega128
 CLOCK       = 8000000
 PROGRAMMER  = -c stk500v2 -P avrdoper
 AVRDUDE     = avrdude $(PROGRAMMER) -p $(DEVICE)
-CCAVR       = avr-g++ -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) 
+CCAVR       = avr-g++ -Wall  -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE)
 
 OBJECTS     = main.o buffer.o usart.o lcd.o util.o
 AVR_OBJECTS = $(patsubst %,out/%,$(OBJECTS))
 
-all: main.hex
+all: main.hex size
 
 out/%.o : src/%.cpp
 	$(CCAVR) -c $< -o $@
